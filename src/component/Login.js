@@ -1,6 +1,7 @@
 import React, {useRef, useState, useEffect, useContext} from 'react'
 import AuthContext from '../context/AuthProvider';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
+import './Login.css'
 
 import axios from '../api/axios'
 const LOGIN_URL = '/api/Auth/login';
@@ -9,6 +10,7 @@ const Login = () => {
     const {setAuth} = useContext(AuthContext);
     const userRef = useRef();
     const errRef = useRef();
+    const navigation = useNavigate();
 
     const [username, setusername] = useState('');
     const [password, setPassword] = useState('');
@@ -39,7 +41,8 @@ const Login = () => {
             );
             setusername('');
             setPassword('');
-            setSuccess(true);            
+            setSuccess(true);
+            navigation('/mainpage');            
         } catch (err) {
             if(!err?.response) {
                 setErrMsg('Sem resposta do servidor')
@@ -57,49 +60,49 @@ const Login = () => {
 
     return (
         <>
-        {success ? (
-            <section>
-                <h1>você está logado!</h1>
-                <br/>
-                <p>
-                    <a href="#">Acessar a pagina home</a>
-                </p>
-            </section>
-        ) : (
-            <section>
-                <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+        <section >
+          <div className="login-container">
+            <p ref={errRef} className={errMsg ? 'errmsg' : 'offscreen'} aria-live="assertive">
+              {errMsg}
+            </p>
+            <form className="login-form" onSubmit={handleSubmit}>
+              <div className="login-content">
                 <h1>Logar</h1>
-                <form onSubmit={handleSubmit}>
-                    <label>Nome:</label>
-                    <input 
-                        type="text" 
-                        id="username"
-                        ref={userRef}
-                        autoComplete='off'
-                        onChange={(e) => setusername(e.target.value)}
-                        value={username}
-                        required
-                    />
-                    <label>Senha:</label>
-                    <input 
-                        type="password" 
-                        id="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                        value={password}
-                        required
-                    />
-                    <button>Logar</button>
-                </form>
-                <p>
-                    Precisa de uma conta?<br/>
-                    <span className="line">
-                        <Link to="/register">Registrar</Link>
-                    </span>
-                </p>
-            </section>
-        )}
-    </>
-    )
-}
+                <div className="input-container">
+                  <label>Nome:</label>
+                  <input
+                    type="text"
+                    id="username"
+                    ref={userRef}
+                    autoComplete="off"
+                    onChange={(e) => setusername(e.target.value)}
+                    value={username}
+                    required
+                  />
+                </div>
+                <div className="input-container">
+                  <label>Senha:</label>
+                  <input
+                    type="password"
+                    id="password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    required
+                  />
+                </div>
+                <button type="submit">Logar</button>
+              </div>
+              <p className="register-info">
+                Precisa de uma conta?{' '}
+                <span className="line">
+                  <Link to="/register">Registrar</Link>
+                </span>
+              </p>
+            </form>
+          </div>
+        </section>
+      </>
+    );
+  };
 
 export default Login
